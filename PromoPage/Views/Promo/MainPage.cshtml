@@ -1,0 +1,123 @@
+﻿@model PromoPage.Models.PromoData
+
+@using (Html.BeginForm("MainPage", "Promo", FormMethod.Get))
+{
+    <table class="table">
+        @if (Model != null)
+        {
+            <tr class="cover">
+                <th class="logo"></th>
+                <th class="description" colspan="3">
+                    Компания "LinguaTravel co." готова организовать и провести обучающие семинары по интересующим
+                    вас направлениям в удобное для вас время. Для регистрации на мероприятие укажите свои ФИО, название компании,
+                    должность и контактные данные в соответствующих графах, выберите город проведения интересующего вас семинара и нажмите кнопку «Зарегистрироваться».
+                    В рамках семинаров вы сможете лично познакомиться с сотрудниками "LinguaTravel co.", получить подробную информацию об особенностях работы с компанией,
+                    обучении за рубежом, языковых курсах и высшем образовании.
+                </th>
+            </tr>
+            <tr class="active">
+                <th>Город</th>
+                <th>Дата проведения</th>
+                <th>Время проведения</th>
+                <th>Место проведения</th>
+            </tr>
+
+            foreach (var seminar in Model.Seminars)
+            {
+                <tr>
+                    <td>
+                        @Html.Label(seminar.City)
+                    </td>
+                    <td>
+                        @Html.Label(string.Format("{0:dd/MM/yyyy}", seminar.Date))
+                    </td>
+                    <td>
+                        @Html.Label(seminar.Time)
+                    </td>
+                    <td>
+                        @Html.Raw(seminar.Location)
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+}
+
+@Html.Label("Регистрация на семинары", new { style = "font-size: 24pt;" })
+
+@using (Html.BeginForm("AddParticipant", "Promo", FormMethod.Post))
+{
+    if (!Model.IsTransactionCommitted)
+    {
+        <table class="table">
+            <tr class="register">
+                <th class="regdata">
+                    @Html.Label("Фамилия:", new { @class = "mtop20" })
+                    @Html.TextBoxFor(model => model.Participant.Surname, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.Surname)
+                </th>
+                <th class="regdata">
+                    @Html.Label("Имя:", new { @class = "mtop20" })
+                    @Html.TextBoxFor(model => model.Participant.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.Name)
+                </th>
+                <th class="regdata">
+                    @Html.Label("Отчество:", new { @class = "mtop20" })
+                    @Html.TextBoxFor(model => model.Participant.MiddleName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.MiddleName)
+                </th>
+            </tr>
+            <tr class="register">
+                <th class="regdata">
+                    @Html.Label("Агентство:")
+                    @Html.TextBoxFor(model => model.Participant.TourAgency, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.TourAgency)
+                </th>
+                <th class="regdata">
+
+                    @Html.Label("ИНН:")
+                    @Html.TextBoxFor(model => model.Participant.INN, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.INN)
+                </th>
+                <th class="regdata">
+
+                    @Html.Label("Должность:")
+                    @Html.DropDownListFor(model => model.Participant.Position, Model.Positions.Select(list => new SelectListItem()
+                    {
+                        Text = list.PositionName,
+                        Value = list.PositionName
+                    }), "Выберите должность", new { @class = "form-control" })
+                    @Html.ValidationMessage("Position")
+                </th>
+            </tr>
+            <tr class="register">
+                <th class="regdata">
+                    @Html.Label("Город:")
+                    @Html.TextBoxFor(model => model.Participant.City, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.City)
+                </th>
+                <th class="regdata">
+                    @Html.Label("Телефон:")
+                    @Html.TextBoxFor(model => model.Participant.Phone, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.Phone)
+                </th>
+                <th class="regdata">
+                    @Html.Label("E-mail:")
+                    @Html.TextBoxFor(model => model.Participant.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Participant.Email)
+                </th>
+            </tr>
+            <tr class="register">
+                <th class="regdata">
+                    @Html.TextBox("Register", "Зарегистрироваться", new { type = "submit", @class = "btn btn-success mtop20" })
+                </th>
+            </tr>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-success mtop20">
+            <strong>Ваша заявка зарегистрирована!</strong> Будем рады видеть вас на семинаре.
+        </div>
+    }
+}
